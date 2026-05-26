@@ -1,0 +1,39 @@
+from typing import Protocol
+from uuid import UUID
+
+from mundo_invest.domain.entities import Cliente
+
+
+class ClienteRepository(Protocol):
+    def add(self, cliente: Cliente) -> None: ...
+
+    def find_by_email(self, email: str) -> Cliente | None: ...
+
+    def email_exists(self, email: str) -> bool: ...
+
+    def update(self, cliente: Cliente) -> None: ...
+
+
+class WebhookEventRepository(Protocol):
+    def exists(self, event_id: str) -> bool: ...
+
+    def record(self, event_id: str, card_id: str, cliente_email: str) -> None: ...
+
+
+class PipefyGateway(Protocol):
+    def create_card(self, cliente: Cliente) -> str: ...
+
+    def update_card_field(self, card_id: str, field_id: str, new_value: str) -> None: ...
+
+
+class UnitOfWork(Protocol):
+    clientes: ClienteRepository
+    eventos: WebhookEventRepository
+
+    def __enter__(self) -> "UnitOfWork": ...
+
+    def __exit__(self, exc_type, exc, tb) -> None: ...
+
+    def commit(self) -> None: ...
+
+    def rollback(self) -> None: ...

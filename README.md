@@ -45,29 +45,28 @@ uv run pytest -q
 
 ## Exemplos de API (`curl`)
 
+No **Windows (PowerShell)**, use `curl.exe` — o comando `curl` é alias de `Invoke-WebRequest` e não aceita os mesmos argumentos. Os exemplos abaixo usam JSON em uma linha no `-d` para funcionar no PowerShell, Git Bash, WSL e Linux/macOS.
+
 ### `POST /clientes` — criar cliente
 
 **Sucesso (201):**
 
 ```bash
-curl -X POST http://localhost:8000/clientes \
+curl.exe -X POST http://localhost:8000/clientes \
   -H "Content-Type: application/json" \
-  -d '{
-    "cliente_nome": "João Silva",
-    "cliente_email": "joao.silva@example.com",
-    "tipo_solicitacao": "Atualização cadastral",
-    "valor_patrimonio": 250000
-  }'
+  -d '{"cliente_nome":"João Silva","cliente_email":"joao.silva@example.com","tipo_solicitacao":"Atualização cadastral","valor_patrimonio":250000}'
 ```
+
+Em Linux/macOS/Git Bash, `curl.exe` pode ser escrito como `curl`.
 
 **Email duplicado (409):** mesma chamada acima rodada uma segunda vez.
 
 **Payload inválido (422):**
 
 ```bash
-curl -X POST http://localhost:8000/clientes \
+curl.exe -X POST http://localhost:8000/clientes \
   -H "Content-Type: application/json" \
-  -d '{"cliente_nome": "x", "cliente_email": "not-an-email", "tipo_solicitacao": "x", "valor_patrimonio": -1}'
+  -d '{"cliente_nome":"x","cliente_email":"not-an-email","tipo_solicitacao":"x","valor_patrimonio":-1}'
 ```
 
 ### `POST /webhooks/pipefy/card-updated` — webhook
@@ -75,14 +74,9 @@ curl -X POST http://localhost:8000/clientes \
 **Sucesso (200 `processed`):**
 
 ```bash
-curl -X POST http://localhost:8000/webhooks/pipefy/card-updated \
+curl.exe -X POST http://localhost:8000/webhooks/pipefy/card-updated \
   -H "Content-Type: application/json" \
-  -d '{
-    "event_id": "evt_123",
-    "card_id": "card_456",
-    "cliente_email": "joao.silva@example.com",
-    "timestamp": "2026-05-25T12:00:00Z"
-  }'
+  -d '{"event_id":"evt_123","card_id":"card_456","cliente_email":"joao.silva@example.com","timestamp":"2026-05-25T12:00:00Z"}'
 ```
 
 **Duplicata (200 `already_processed`):** mesma chamada acima rodada novamente.
